@@ -4,6 +4,7 @@ import supabase from "../lib/supabase";
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { useSessionContext } from "../contexts/SessionContext";
+import { UserCircleIcon } from "lucide-react";
 
 function Nav() {
   const [email, setEmail] = useState("");
@@ -40,8 +41,8 @@ function Nav() {
       <h1 className="text-3xl">Tracker App</h1>
       {session ? (
         <Button
-          variant="secondary"
-          className="p-2 h-[24px]"
+          variant="default"
+          className="p-2 border-none rounded"
           onClick={handleLogout}
         >
           Sign Out
@@ -49,8 +50,8 @@ function Nav() {
       ) : (
         <Popover>
           <PopoverTrigger asChild>
-            <Button variant="outline" className="p-2 h-[24px]">
-              Account
+            <Button variant="ghost" className="p-2 h-[24px]">
+              <UserCircleIcon size={24} />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="border-none rounded bg-slate-100 space-y-4">
@@ -74,8 +75,8 @@ function Nav() {
               />
             </div>
             <Button
-              variant="outline"
-              className="p-2 border-none rounded text-white bg-zinc-700 hover:bg-zinc-600"
+              variant="default"
+              className="p-2 border-none rounded"
               onClick={handleLogin}
             >
               Login
