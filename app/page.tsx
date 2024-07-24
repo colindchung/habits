@@ -1,10 +1,12 @@
-import { useEffect, useState } from "react";
-import { SessionContext } from "./contexts/SessionContext";
-import { Session } from "@supabase/supabase-js";
-import supabase from "./lib/supabase";
-import Nav from "./components/nav";
+"use client";
 
-function App() {
+import { useEffect, useState } from "react";
+import { SessionContext } from "../contexts/SessionContext";
+import { Session } from "@supabase/supabase-js";
+import supabase from "../lib/supabase";
+import Nav from "../components/nav";
+
+export default function Home() {
   const [session, setSession] = useState<Session | null>(null);
 
   useEffect(() => {
@@ -25,5 +27,3 @@ function App() {
     </SessionContext.Provider>
   );
 }
-
-export default App;
