@@ -1,6 +1,6 @@
 import { Button } from "./ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
-import supabase from "../lib/supabase";
+import supabase from "../lib/supabase/client";
 import { Input } from "./ui/input";
 import { useState } from "react";
 import { useSessionContext } from "../contexts/SessionContext";
@@ -38,7 +38,12 @@ function Nav() {
 
   return (
     <div className="flex flex-row justify-between">
-      <h1 className="text-3xl">Tracker App</h1>
+      <div>
+        <h1 className="text-4xl font-bold">Habits Tracker</h1>
+        <div className="text-xs italic">
+          Building discipline through public shame
+        </div>
+      </div>
       {session ? (
         <Button
           variant="default"
