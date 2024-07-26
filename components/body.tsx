@@ -75,7 +75,7 @@ function Body() {
             </div>
             <div>
               <Label>
-                Running ({data.weekInfo.bike_meters}/{WEEKLY_GOALS.BIKE_METERS})
+                Biking ({data.weekInfo.bike_meters}/{WEEKLY_GOALS.BIKE_METERS})
               </Label>
               <div className="flex flex-row items-center space-x-4">
                 <Progress

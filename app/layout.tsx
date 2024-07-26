@@ -9,8 +9,8 @@ const fontSans = FontSans({
   variable: "--font-sans",
 });
 export const metadata: Metadata = {
-  title: "Habit Tracker",
-  description: "Building discipline through shame shame shame",
+  title: "Habits Tracker",
+  description: "Building discipline through public shame",
 };
 
 export default function RootLayout({
