@@ -1,31 +1,96 @@
 import { formatDate } from "@/lib/date";
 import { useQuery } from "@tanstack/react-query";
-import { headers } from "next/headers";
 import { useState } from "react";
+import { DatePicker } from "./datepicker";
+import { Progress } from "./ui/progress";
+import { Label } from "./ui/label";
+import { DashboardGetResponse } from "@/app/api/dashboard/route";
+
+const WEEKLY_GOALS = {
+  PUSHUPS: 500,
+  PULLUPS: 75,
+  RUN_METERS: 15000,
+  BIKE_METERS: 30000,
+};
 
 function Body() {
-  const [date, setDate] = useState(formatDate(new Date(), "YYYY-MM-DD"));
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
-  const { data } = useQuery({
-    queryKey: ["dailyInfo"],
+  const { data, isFetching } = useQuery({
+    queryKey: ["dashboard", date],
     queryFn: async () => {
       // const formData = new FormData();
-      const response = await fetch(`/api/dailyInfo?date=${date}`, {
-        method: "GET",
-        // body: new URLSearchParams({
-        //   date: "2024-07-24",
-        // }),
-      });
+      const formattedDate = formatDate(date || new Date(), "YYYY-MM-DD");
+      const response = await fetch(`/api/dashboard?date=${formattedDate}`);
 
-      console.log(response);
-      return await response.json();
+      return (await response.json()) as DashboardGetResponse;
     },
   });
 
   return (
     <main className="h-full w-full py-8">
-      <h1 className="text-2xl font-semibold mb-3">{date}</h1>
-      {data ? <pre>{JSON.stringify(data, null, 2)}</pre> : <p>Loading...</p>}
+      <DatePicker date={date} setDate={setDate} />
+
+      {isFetching ? (
+        <p>Loading...</p>
+      ) : data ? (
+        <section className="pt-8">
+          <h2 className="text-xl font-semibold">Weekly Goals</h2>
+
+          <div className="flex flex-row flex-wrap space-x-8">
+            <div>
+              <Label>
+                Pushups ({data.weekInfo.pushups}/{WEEKLY_GOALS.PUSHUPS})
+              </Label>
+              <div className="flex flex-row items-center space-x-4">
+                <Progress
+                  value={(100 * data.weekInfo.pushups) / WEEKLY_GOALS.PUSHUPS}
+                  className="bg-zinc-300 w-48"
+                />
+              </div>
+            </div>
+            <div>
+              <Label>
+                Pullups ({data.weekInfo.pullups}/{WEEKLY_GOALS.PULLUPS})
+              </Label>
+              <div className="flex flex-row items-center space-x-4">
+                <Progress
+                  value={(100 * data.weekInfo.pullups) / WEEKLY_GOALS.PULLUPS}
+                  className="bg-zinc-300 w-48"
+                />
+              </div>
+            </div>
+            <div>
+              <Label>
+                Running ({data.weekInfo.run_meters}/{WEEKLY_GOALS.RUN_METERS})
+              </Label>
+              <div className="flex flex-row items-center space-x-4">
+                <Progress
+                  value={
+                    (100 * data.weekInfo.run_meters) / WEEKLY_GOALS.RUN_METERS
+                  }
+                  className="bg-zinc-300 w-48"
+                />
+              </div>
+            </div>
+            <div>
+              <Label>
+                Running ({data.weekInfo.bike_meters}/{WEEKLY_GOALS.BIKE_METERS})
+              </Label>
+              <div className="flex flex-row items-center space-x-4">
+                <Progress
+                  value={
+                    (100 * data.weekInfo.bike_meters) / WEEKLY_GOALS.BIKE_METERS
+                  }
+                  className="bg-zinc-300 w-48"
+                />
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <p>No data for this date</p>
+      )}
     </main>
   );
 }
