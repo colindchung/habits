@@ -19,9 +19,8 @@ interface WeeklyMetricsProps {
 
 function WeeklyMetrics({ data }: WeeklyMetricsProps) {
   return (
-    <section className="pt-8">
+    <>
       <h2 className="text-xl font-semibold">Weekly Fitness Goals</h2>
-
       <div className="flex flex-row flex-wrap gap-8">
         <div>
           <Label>
@@ -68,7 +67,7 @@ function WeeklyMetrics({ data }: WeeklyMetricsProps) {
           </div>
         </div>
       </div>
-    </section>
+    </>
   );
 }
 

@@ -23,17 +23,21 @@ function Body() {
   return (
     <main className="h-full w-full py-8">
       <DatePicker date={date} setDate={setDate} />
-
-      {isFetching ? (
-        <p>Loading...</p>
-      ) : data ? (
-        <>
-          <WeeklyMetrics data={data.weekInfo} />
-          <DailyMetrics data={data.todayInfo} />
-        </>
-      ) : (
-        <p>No data for this date</p>
-      )}
+      <section className="pt-8">
+        {isFetching ? (
+          <p>Loading...</p>
+        ) : data ? (
+          <>
+            <WeeklyMetrics data={data.weekInfo} />
+            <DailyMetrics
+              data={data.todayInfo}
+              date={formatDate(date || new Date(), "YYYY-MM-DD")}
+            />
+          </>
+        ) : (
+          <p>No data for this date</p>
+        )}
+      </section>
     </main>
   );
 }

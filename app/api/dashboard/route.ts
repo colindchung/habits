@@ -83,3 +83,76 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "Error fetching data" }, { status: 500 });
   }
 }
+
+export interface DailyNotesRequestType {
+  date: string;
+  pushups: number;
+  pullups: number;
+  run_meters: number;
+  bike_meters: number;
+  stretch_html: string;
+  cardio_html: string;
+  strength_html: string;
+  smoke: boolean;
+  alcohol: boolean;
+  edibles: boolean;
+  pornography: boolean;
+  youtube: boolean;
+  pages_read: number;
+}
+
+export async function POST(request: Request) {
+  const {
+    date,
+    pushups,
+    pullups,
+    run_meters,
+    bike_meters,
+    strength_html,
+    cardio_html,
+    stretch_html,
+    smoke,
+    alcohol,
+    edibles,
+    pornography,
+    youtube,
+    pages_read,
+  } = await request.json();
+
+  console.log("POST request", date);
+  console.log(await supabase.auth.getSession());
+
+  try {
+    const { data, error } = await supabase.from("daily_notes").upsert(
+      [
+        {
+          date,
+          pushups,
+          pullups,
+          run_meters,
+          bike_meters,
+          stretch_html,
+          cardio_html,
+          strength_html,
+          smoke,
+          alcohol,
+          edibles,
+          pornography,
+          youtube,
+          pages_read,
+        },
+      ],
+      {
+        onConflict: "date",
+      }
+    );
+
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
+
+    return NextResponse.json(data, { status: 200 });
+  } catch (e) {
+    return NextResponse.json({ error: "Error saving data" }, { status: 500 });
+  }
+}

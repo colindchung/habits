@@ -7,13 +7,14 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useSessionContext } from "@/contexts/SessionContext";
-import { Check, Pencil, PenIcon, X } from "lucide-react";
+import { Check, Save, X } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Button } from "./ui/button";
 
 interface DailyMetricsProps {
+  date: string;
   data?: {
     pushups: number;
     pullups: number;
@@ -96,7 +97,7 @@ function ReadOnlyTable({ data }: DailyMetricsProps) {
   );
 }
 
-function WriteTable({ data }: DailyMetricsProps) {
+function WriteTable({ data, date }: DailyMetricsProps) {
   const [pushups, setPushups] = useState<number>(data?.pushups || 0);
   const [pullups, setPullups] = useState<number>(data?.pullups || 0);
   const [runMeters, setRunMeters] = useState<number>(data?.run_meters || 0);
@@ -112,6 +113,38 @@ function WriteTable({ data }: DailyMetricsProps) {
 
   const handleSave = () => {
     console.log("TODO: Save");
+    console.log({
+      pushups,
+      pullups,
+      runMeters,
+      bikeMeters,
+      smoke,
+      edibles,
+      alcohol,
+      pornography,
+      youtube,
+      pagesRead,
+    });
+
+    void fetch("/api/dashboard", {
+      method: "POST",
+      body: JSON.stringify({
+        date,
+        pushups,
+        pullups,
+        run_meters: runMeters,
+        bike_meters: bikeMeters,
+        stretch_html: "",
+        cardio_html: "",
+        strength_html: "",
+        smoke,
+        edibles,
+        alcohol,
+        pornography,
+        youtube,
+        pages_read: pagesRead,
+      }),
+    });
   };
 
   return (
@@ -152,7 +185,7 @@ function WriteTable({ data }: DailyMetricsProps) {
             </TableCell>
             <TableCell>
               <Input
-                className="w-16"
+                className="w-24"
                 type="number"
                 value={runMeters}
                 onChange={(e) => setRunMeters(parseInt(e.target.value))}
@@ -160,7 +193,7 @@ function WriteTable({ data }: DailyMetricsProps) {
             </TableCell>
             <TableCell>
               <Input
-                className="w-16"
+                className="w-24"
                 type="number"
                 value={bikeMeters}
                 onChange={(e) => setBikeMeters(parseInt(e.target.value))}
@@ -206,7 +239,7 @@ function WriteTable({ data }: DailyMetricsProps) {
             </TableCell>
             <TableCell>
               {/* TODO: Add functionality and tooltip */}
-              <PenIcon
+              <Save
                 className="w-4 text-slate-500 hover:text-slate-700"
                 onClick={handleSave}
               />
@@ -218,14 +251,17 @@ function WriteTable({ data }: DailyMetricsProps) {
   );
 }
 
-function DailyMetrics({ data }: DailyMetricsProps) {
+function DailyMetrics({ data, date }: DailyMetricsProps) {
   const session = useSessionContext();
 
   return (
     <section className="pt-8">
-      <h2 className="text-xl font-semibold">Today</h2>
-
-      {session ? <WriteTable data={data} /> : <ReadOnlyTable data={data} />}
+      <h2 className="text-xl font-semibold mb-4">Today</h2>
+      {session ? (
+        <WriteTable data={data} date={date} />
+      ) : (
+        <ReadOnlyTable data={data} date={date} />
+      )}
     </section>
   );
 }
