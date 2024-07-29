@@ -10,10 +10,14 @@ export interface DashboardGetResponse {
     run_meters: number;
     bike_meters: number;
     stretch_html: string;
+    cardio_html: string;
     strength_html: string;
     smoke: boolean;
     alcohol: boolean;
     edibles: boolean;
+    pornography: boolean;
+    youtube: boolean;
+    pages_read: number;
   };
   weekInfo: {
     pushups: number;
@@ -41,6 +45,7 @@ export async function GET(request: Request) {
           run_meters,
           bike_meters,
           stretch_html,
+          cardio_html,
           strength_html,
           smoke,
           alcohol,
@@ -59,10 +64,10 @@ export async function GET(request: Request) {
     const todayInfo = dailyInfoForWeek.find((day) => day.date === date);
     const weekInfo = dailyInfoForWeek.reduce(
       (acc, obj) => {
-        acc.pushups += obj.pushups;
-        acc.pullups += obj.pullups;
-        acc.run_meters += obj.run_meters;
-        acc.bike_meters += obj.bike_meters;
+        acc.pushups += obj.pushups || 0;
+        acc.pullups += obj.pullups || 0;
+        acc.run_meters += obj.run_meters || 0;
+        acc.bike_meters += obj.bike_meters || 0;
         return acc;
       },
       { pushups: 0, pullups: 0, run_meters: 0, bike_meters: 0 }

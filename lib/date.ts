@@ -12,18 +12,29 @@ export function formatDate(date: Date, format: string): string {
 }
 
 export function getWeekDatesFromDate(dateString: string): string[] {
-  const inputDate = new Date(dateString);
-  const dayOfWeek = inputDate.getDay();
+  const inputDate = new Date(dateString + "T00:00:00Z"); // Treat the input date as UTC
+  const dayOfWeek = inputDate.getUTCDay(); // 0 (Sunday) to 6 (Saturday)
 
-  const sunday = new Date(inputDate);
-  sunday.setDate(inputDate.getDate() - dayOfWeek);
+  // Calculate the start (Sunday) and end (Saturday) of the week in UTC
+  const startOfWeek = new Date(inputDate);
+  startOfWeek.setUTCDate(inputDate.getUTCDate() - dayOfWeek);
 
-  const weekDates: string[] = [];
-  for (let i = 0; i < 7; i++) {
-    const date = new Date(sunday);
-    date.setDate(sunday.getDate() + i);
-    weekDates.push(formatDate(date, "YYYY-MM-DD"));
+  const endOfWeek = new Date(inputDate);
+  endOfWeek.setUTCDate(inputDate.getUTCDate() + (6 - dayOfWeek));
+
+  const dates: string[] = [];
+
+  // Generate the dates from start to end of the week in UTC
+  for (
+    let date = new Date(startOfWeek);
+    date <= endOfWeek;
+    date.setUTCDate(date.getUTCDate() + 1)
+  ) {
+    const year = date.getUTCFullYear();
+    const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(date.getUTCDate()).padStart(2, "0");
+    dates.push(`${year}-${month}-${day}`);
   }
 
-  return weekDates;
+  return dates;
 }
