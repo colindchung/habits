@@ -28,7 +28,7 @@ export default function Home() {
       <QueryClientProvider client={queryClient}>
         <div className="h-screen w-screen items-center justify-center p-8">
           <Nav />
-          {session ? <></> : <Body />}
+          <Body />
         </div>
       </QueryClientProvider>
     </SessionContext.Provider>
