@@ -11,7 +11,6 @@ import { Check, Save, X } from "lucide-react";
 import { useState } from "react";
 import { Input } from "./ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Button } from "./ui/button";
 
 interface DailyMetricsProps {
   date: string;
@@ -20,9 +19,9 @@ interface DailyMetricsProps {
     pullups: number;
     run_meters: number;
     bike_meters: number;
-    stretch_html: string;
-    cardio_html: string;
-    strength_html: string;
+    stretch_notes: string;
+    cardio_notes: string;
+    strength_notes: string;
     smoke: boolean;
     alcohol: boolean;
     edibles: boolean;
@@ -85,9 +84,9 @@ function ReadOnlyTable({ data }: DailyMetricsProps) {
         </TableHeader>
         <TableBody>
           <TableRow>
-            <TableCell>{data.stretch_html}</TableCell>
-            <TableCell>{data.strength_html}</TableCell>
-            <TableCell>{data.strength_html}</TableCell>
+            <TableCell>{data.stretch_notes}</TableCell>
+            <TableCell>{data.strength_notes}</TableCell>
+            <TableCell>{data.strength_notes}</TableCell>
           </TableRow>
         </TableBody>
       </Table> */}
@@ -111,21 +110,21 @@ function WriteTable({ data, date }: DailyMetricsProps) {
   const [youtube, setYoutube] = useState<boolean>(data?.youtube || false);
   const [pagesRead, setPagesRead] = useState<number>(data?.pages_read || 0);
 
-  const handleSave = () => {
-    console.log("TODO: Save");
-    console.log({
-      pushups,
-      pullups,
-      runMeters,
-      bikeMeters,
-      smoke,
-      edibles,
-      alcohol,
-      pornography,
-      youtube,
-      pagesRead,
-    });
+  const [stretchNotes, setStretchNotes] = useState<string>(
+    data?.strength_notes || ""
+  );
+  const [cardioNotes, setCardioNotes] = useState<string>(
+    data?.cardio_notes || ""
+  );
+  const [strengthNotes, setStrengthNotes] = useState<string>(
+    data?.stretch_notes || ""
+  );
 
+  // const strengthHtmlEditorRef = useRef<TipTapEditorHandle>(null);
+  // const cardioHtmlEditorRef = useRef<TipTapEditorHandle>(null);
+  // const stretchHtmlEditorRef = useRef<TipTapEditorHandle>(null);
+
+  const handleSave = () => {
     void fetch("/api/dashboard", {
       method: "POST",
       body: JSON.stringify({
@@ -134,9 +133,9 @@ function WriteTable({ data, date }: DailyMetricsProps) {
         pullups,
         run_meters: runMeters,
         bike_meters: bikeMeters,
-        stretch_html: "",
-        cardio_html: "",
-        strength_html: "",
+        stretch_notes: stretchNotes,
+        cardio_notes: cardioNotes,
+        strength_notes: strengthNotes,
         smoke,
         edibles,
         alcohol,
@@ -148,7 +147,7 @@ function WriteTable({ data, date }: DailyMetricsProps) {
   };
 
   return (
-    <div className="space-y-8 items-end">
+    <div className="space-y-2 items-end">
       <Table>
         <TableHeader>
           <TableRow>
@@ -237,8 +236,50 @@ function WriteTable({ data, date }: DailyMetricsProps) {
                 onChange={(e) => setPagesRead(parseInt(e.target.value))}
               />
             </TableCell>
-            <TableCell>
+            <TableCell className="w-16">
               {/* TODO: Add functionality and tooltip */}
+              <Save
+                className="w-4 text-slate-500 hover:text-slate-700"
+                onClick={handleSave}
+              />
+            </TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Strength</TableHead>
+            <TableHead>Cardio</TableHead>
+            <TableHead>Stretch</TableHead>
+            <TableHead>Actions</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow>
+            <TableCell className="w-1/3">
+              <Input
+                className="w-full"
+                value={strengthNotes}
+                onChange={(e) => setStrengthNotes(e.target.value)}
+              />
+            </TableCell>
+            <TableCell className="w-1/3">
+              <Input
+                className="w-full"
+                value={cardioNotes}
+                onChange={(e) => setCardioNotes(e.target.value)}
+              />
+            </TableCell>
+            <TableCell className="w-1/3">
+              <Input
+                className="w-full"
+                value={stretchNotes}
+                onChange={(e) => setStretchNotes(e.target.value)}
+              />
+            </TableCell>
+            <TableCell className="w-16">
               <Save
                 className="w-4 text-slate-500 hover:text-slate-700"
                 onClick={handleSave}

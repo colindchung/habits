@@ -9,9 +9,9 @@ export interface DashboardGetResponse {
     pullups: number;
     run_meters: number;
     bike_meters: number;
-    stretch_html: string;
-    cardio_html: string;
-    strength_html: string;
+    stretch_notes: string;
+    cardio_notes: string;
+    strength_notes: string;
     smoke: boolean;
     alcohol: boolean;
     edibles: boolean;
@@ -44,9 +44,9 @@ export async function GET(request: Request) {
           pullups,
           run_meters,
           bike_meters,
-          stretch_html,
-          cardio_html,
-          strength_html,
+          stretch_notes,
+          cardio_notes,
+          strength_notes,
           smoke,
           alcohol,
           edibles,
@@ -90,9 +90,9 @@ export interface DailyNotesRequestType {
   pullups: number;
   run_meters: number;
   bike_meters: number;
-  stretch_html: string;
-  cardio_html: string;
-  strength_html: string;
+  stretch_notes: string;
+  cardio_notes: string;
+  strength_notes: string;
   smoke: boolean;
   alcohol: boolean;
   edibles: boolean;
@@ -108,9 +108,9 @@ export async function POST(request: Request) {
     pullups,
     run_meters,
     bike_meters,
-    strength_html,
-    cardio_html,
-    stretch_html,
+    strength_notes,
+    cardio_notes,
+    stretch_notes,
     smoke,
     alcohol,
     edibles,
@@ -118,9 +118,6 @@ export async function POST(request: Request) {
     youtube,
     pages_read,
   } = await request.json();
-
-  console.log("POST request", date);
-  console.log(await supabase.auth.getSession());
 
   try {
     const { data, error } = await supabase.from("daily_notes").upsert(
@@ -131,9 +128,9 @@ export async function POST(request: Request) {
           pullups,
           run_meters,
           bike_meters,
-          stretch_html,
-          cardio_html,
-          strength_html,
+          stretch_notes,
+          cardio_notes,
+          strength_notes,
           smoke,
           alcohol,
           edibles,

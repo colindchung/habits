@@ -1,36 +1,45 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { SessionContext } from "@/contexts/SessionContext";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Session } from "@supabase/supabase-js";
-import supabase from "@/lib/supabase/client";
-import Nav from "@/components/nav";
-import Body from "@/components/body";
-
-const queryClient = new QueryClient();
+import { formatDate } from "@/lib/date";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { DatePicker } from "@/components/datepicker";
+import { DashboardGetResponse } from "@/app/api/dashboard/route";
+import WeeklyMetrics from "@/components/weeklyMetrics";
+import DailyMetrics from "@/components/dailyMetrics";
 
 export default function Home() {
-  const [session, setSession] = useState<Session | null>(null);
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
-  useEffect(() => {
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
+  const { data, isFetching } = useQuery({
+    queryKey: ["dashboard", date],
+    queryFn: async () => {
+      // const formData = new FormData();
+      const formattedDate = formatDate(date || new Date(), "YYYY-MM-DD");
+      const response = await fetch(`/api/dashboard?date=${formattedDate}`);
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-  }, []);
+      return (await response.json()) as DashboardGetResponse;
+    },
+  });
 
   return (
-    <SessionContext.Provider value={session}>
-      <QueryClientProvider client={queryClient}>
-        <div className="h-screen w-screen items-center justify-center p-8">
-          <Nav />
-          <Body />
-        </div>
-      </QueryClientProvider>
-    </SessionContext.Provider>
+    <main className="h-full w-full py-8">
+      <DatePicker date={date} setDate={setDate} />
+      <section className="pt-8">
+        {isFetching ? (
+          <p>Loading...</p>
+        ) : data ? (
+          <>
+            <WeeklyMetrics data={data.weekInfo} />
+            <DailyMetrics
+              data={data.todayInfo}
+              date={formatDate(date || new Date(), "YYYY-MM-DD")}
+            />
+          </>
+        ) : (
+          <p>No data for this date</p>
+        )}
+      </section>
+    </main>
   );
 }
