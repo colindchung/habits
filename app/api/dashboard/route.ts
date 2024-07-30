@@ -19,6 +19,13 @@ export interface DashboardGetResponse {
     youtube: boolean;
     pages_read: number;
   };
+  goals: {
+    date: string;
+    id: number;
+    description: string;
+    is_completed: boolean;
+    notes: string;
+  }[];
   weekInfo: {
     pushups: number;
     pullups: number;
@@ -61,6 +68,24 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    const { data: dailyGoalsForWeek, error: goalsError } = await supabase
+      .from("daily_goals")
+      .select(
+        `
+          date,
+          id,
+          description,
+          is_completed,
+          notes
+      `
+      )
+      .eq("date", date)
+      .order("id", { ascending: true });
+
+    if (goalsError) {
+      return NextResponse.json({ error: goalsError.message }, { status: 500 });
+    }
+
     const todayInfo = dailyInfoForWeek.find((day) => day.date === date);
     const weekInfo = dailyInfoForWeek.reduce(
       (acc, obj) => {
@@ -75,6 +100,7 @@ export async function GET(request: Request) {
 
     const response: DashboardGetResponse = {
       todayInfo,
+      goals: dailyGoalsForWeek,
       weekInfo,
     };
 

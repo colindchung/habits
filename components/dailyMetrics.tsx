@@ -297,7 +297,7 @@ function DailyMetrics({ data, date }: DailyMetricsProps) {
 
   return (
     <section className="pt-8">
-      <h2 className="text-xl font-semibold mb-4">Today</h2>
+      <h2 className="text-xl font-semibold mb-4">Today&apos;s Stats</h2>
       {session ? (
         <WriteTable data={data} date={date} />
       ) : (

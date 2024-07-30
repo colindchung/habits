@@ -7,6 +7,7 @@ import { DatePicker } from "@/components/datepicker";
 import { DashboardGetResponse } from "@/app/api/dashboard/route";
 import WeeklyMetrics from "@/components/weeklyMetrics";
 import DailyMetrics from "@/components/dailyMetrics";
+import DailyGoals from "@/components/dailyGoals";
 
 export default function Home() {
   const [date, setDate] = useState<Date | undefined>(new Date());
@@ -31,6 +32,10 @@ export default function Home() {
         ) : data ? (
           <>
             <WeeklyMetrics data={data.weekInfo} />
+            <DailyGoals
+              date={formatDate(date || new Date(), "YYYY-MM-DD")}
+              initialGoals={data.goals}
+            />
             <DailyMetrics
               data={data.todayInfo}
               date={formatDate(date || new Date(), "YYYY-MM-DD")}
