@@ -6,6 +6,7 @@ const WEEKLY_GOALS = {
   PULLUPS: 75,
   RUN_METERS: 15000,
   BIKE_METERS: 30000,
+  PAGES_READ: 100,
 };
 
 interface WeeklyMetricsProps {
@@ -14,6 +15,7 @@ interface WeeklyMetricsProps {
     pullups: number;
     run_meters: number;
     bike_meters: number;
+    pages_read: number;
   };
 }
 
@@ -62,6 +64,17 @@ function WeeklyMetrics({ data }: WeeklyMetricsProps) {
           <div className="flex flex-row items-center space-x-4">
             <Progress
               value={(100 * data.bike_meters) / WEEKLY_GOALS.BIKE_METERS}
+              className="bg-zinc-300 w-48"
+            />
+          </div>
+        </div>
+        <div>
+          <Label>
+            Pages Read ({data.pages_read}/{WEEKLY_GOALS.PAGES_READ})
+          </Label>
+          <div className="flex flex-row items-center space-x-4">
+            <Progress
+              value={(100 * data.pages_read) / WEEKLY_GOALS.PAGES_READ}
               className="bg-zinc-300 w-48"
             />
           </div>

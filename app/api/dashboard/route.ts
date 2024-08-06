@@ -31,6 +31,7 @@ export interface DashboardGetResponse {
     pullups: number;
     run_meters: number;
     bike_meters: number;
+    pages_read: number;
   };
 }
 
@@ -93,9 +94,10 @@ export async function GET(request: Request) {
         acc.pullups += obj.pullups || 0;
         acc.run_meters += obj.run_meters || 0;
         acc.bike_meters += obj.bike_meters || 0;
+        acc.pages_read += obj.pages_read || 0;
         return acc;
       },
-      { pushups: 0, pullups: 0, run_meters: 0, bike_meters: 0 }
+      { pushups: 0, pullups: 0, run_meters: 0, bike_meters: 0, pages_read: 0 }
     );
 
     const response: DashboardGetResponse = {
