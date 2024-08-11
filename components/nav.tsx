@@ -50,6 +50,9 @@ function Nav() {
         <Link href="/projects">
           <div className="hover:bg-slate-100 p-2 rounded-sm">Projects</div>
         </Link>
+        <Link href="/pomodoro">
+          <div className="hover:bg-slate-100 p-2 rounded-sm">Pomodoro</div>
+        </Link>
         {session ? (
           <Button
             variant="default"
