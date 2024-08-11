@@ -27,7 +27,7 @@ export default function Pomodoro() {
 
   const startTimer = () => {
     const now = new Date();
-    const future = new Date(now.getTime() + 5 * 1000);
+    const future = new Date(now.getTime() + 25 * 60 * 1000);
     setDate(future);
     setIsCounting(true);
   };
