@@ -20,7 +20,7 @@ function getBooleanLogo(value: boolean) {
   );
 }
 
-interface Metrics {
+export interface Metrics {
   pushups: number;
   pullups: number;
   run_meters: number;
@@ -36,7 +36,7 @@ interface Metrics {
   pages_read: number;
 }
 
-interface DailyMetricsProps {
+export interface DailyMetricsProps {
   date: string;
   data?: Metrics;
 }

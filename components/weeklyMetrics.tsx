@@ -2,27 +2,29 @@ import { Label } from "./ui/label";
 import { Progress } from "./ui/progress";
 
 const WEEKLY_GOALS = {
-  PUSHUPS: 500,
-  PULLUPS: 75,
+  PUSHUPS: 350,
+  PULLUPS: 70,
   RUN_METERS: 15000,
   BIKE_METERS: 30000,
   PAGES_READ: 100,
 };
 
+export interface WeeklyMetricsData {
+  pushups: number;
+  pullups: number;
+  run_meters: number;
+  bike_meters: number;
+  pages_read: number;
+}
+
 interface WeeklyMetricsProps {
-  data: {
-    pushups: number;
-    pullups: number;
-    run_meters: number;
-    bike_meters: number;
-    pages_read: number;
-  };
+  data: WeeklyMetricsData;
 }
 
 function WeeklyMetrics({ data }: WeeklyMetricsProps) {
   return (
     <>
-      <h2 className="text-xl font-semibold">Weekly Fitness Goals</h2>
+      <h2 className="text-xl font-semibold">Weekly Goals</h2>
       <div className="flex flex-row flex-wrap gap-8">
         <div>
           <Label>

@@ -17,8 +17,13 @@ import { MenuIcon, UserCircleIcon } from "lucide-react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 const data = [
+  {
+    title: "Home",
+    href: "/",
+  },
   {
     title: "Projects",
     href: "/projects",
@@ -82,7 +87,7 @@ function Nav() {
     });
 
     if (error) {
-      console.error("Error logging in:", error.message);
+      toast.error("Unable to login");
     } else {
       setEmail("");
       setPassword("");
@@ -93,7 +98,7 @@ function Nav() {
     const { error } = await supabase.auth.signOut();
 
     if (error) {
-      console.error("Error logging out:", error.message);
+      toast.error("Unable to logout");
     }
 
     setIsDrawerOpen(false);
@@ -167,13 +172,6 @@ function Nav() {
             <MenuIcon size={24} />
           </DrawerTrigger>
           <DrawerContent className="px-10 pb-10 gap-y-4">
-            <DrawerClose
-              onClick={() => handleNavItemClick("/")}
-              className="block text-base leading-7 tracking-tight text-gray-700"
-            >
-              Home
-            </DrawerClose>
-
             {data.map((item) => (
               <DrawerClose
                 key={item.title}

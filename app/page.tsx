@@ -1,23 +1,24 @@
 "use client";
 
 import { formatDate } from "@/lib/date";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useRef, useState } from "react";
 import { DatePicker } from "@/components/datepicker";
 import { DashboardGetResponse } from "@/app/api/dashboard/route";
-import WeeklyMetrics from "@/components/weeklyMetrics";
+import WeeklyMetrics, { WeeklyMetricsData } from "@/components/weeklyMetrics";
 import DailyMetrics, { DailyMetricsHandle } from "@/components/dailyMetrics";
 import DailyGoals from "@/components/dailyGoals";
 import { Button } from "@/components/ui/button";
+import toast, { Toaster } from "react-hot-toast";
 
 export default function Home() {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const dailyMetricsRef = useRef<DailyMetricsHandle>(null);
+  const queryClient = useQueryClient();
 
   const { data, isFetching } = useQuery({
     queryKey: ["dashboard", date],
     queryFn: async () => {
-      // const formData = new FormData();
       const formattedDate = formatDate(date || new Date(), "YYYY-MM-DD");
       const response = await fetch(`/api/dashboard?date=${formattedDate}`);
 
@@ -25,11 +26,12 @@ export default function Home() {
     },
   });
 
-  const handleSave = async () => {
-    if (dailyMetricsRef.current) {
+  const handleSaveMutation = useMutation({
+    mutationFn: async (): Promise<{
+      newData: DashboardGetResponse | null;
+    }> => {
+      if (!dailyMetricsRef.current) return { newData: null };
       const data = dailyMetricsRef.current.getTableData();
-      console.log(data);
-
       const response = await fetch("/api/dashboard", {
         method: "POST",
         body: JSON.stringify({
@@ -50,16 +52,59 @@ export default function Home() {
         }),
       });
 
-      if (response.ok) {
-        // TODO: Add toast
-        console.log("Data saved successfully");
-      } else {
-        console.error("Error saving data");
+      if (!response.ok) {
+        toast.error("Error saving data");
+        return { newData: null };
       }
 
-      // TODO: Add usemutation
-    }
-  };
+      const previousData = queryClient.getQueryData<DashboardGetResponse>([
+        "dashboard",
+        date,
+      ]);
+
+      if (!previousData) {
+        throw new Error("No previous data found");
+      }
+
+      return {
+        newData: {
+          ...previousData,
+          todayInfo: data,
+          weekInfo: {
+            pushups:
+              previousData.weekInfo.pushups +
+              data.pushups -
+              (previousData.todayInfo?.pushups || 0),
+            pullups:
+              previousData.weekInfo.pullups +
+              data.pullups -
+              (previousData.todayInfo?.pullups || 0),
+            run_meters:
+              previousData.weekInfo.run_meters +
+              data.run_meters -
+              (previousData.todayInfo?.run_meters || 0),
+            bike_meters:
+              previousData.weekInfo.bike_meters +
+              data.bike_meters -
+              (previousData.todayInfo?.bike_meters || 0),
+            pages_read:
+              previousData.weekInfo.pages_read +
+              data.pages_read -
+              (previousData.todayInfo?.pages_read || 0),
+          } as WeeklyMetricsData,
+        },
+      };
+    },
+    onSuccess: (data) => {
+      toast.success("Updated successfully");
+
+      if (data.newData) {
+        queryClient.setQueryData<DashboardGetResponse>(["dashboard", date], {
+          ...data.newData,
+        });
+      }
+    },
+  });
 
   return (
     <main className="h-full w-full py-8">
@@ -80,7 +125,10 @@ export default function Home() {
               ref={dailyMetricsRef}
             />
             <div className="w-full my-6 text-right">
-              <Button className="py-2 px-3" onClick={handleSave}>
+              <Button
+                className="py-2 px-3"
+                onClick={() => handleSaveMutation.mutateAsync()}
+              >
                 Save Data
               </Button>
             </div>
@@ -89,6 +137,7 @@ export default function Home() {
           <p>No data for this date</p>
         )}
       </section>
+      <Toaster position="bottom-center" />
     </main>
   );
 }
