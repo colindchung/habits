@@ -12,6 +12,14 @@ import { useState, forwardRef, useImperativeHandle } from "react";
 import { Input } from "./ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 
+function getBooleanLogo(value: boolean) {
+  return value ? (
+    <Check className="text-red-500" />
+  ) : (
+    <X className="text-green-500" />
+  );
+}
+
 interface Metrics {
   pushups: number;
   pullups: number;
@@ -31,71 +39,6 @@ interface Metrics {
 interface DailyMetricsProps {
   date: string;
   data?: Metrics;
-}
-
-function getBooleanLogo(value: boolean) {
-  return value ? (
-    <Check className="text-red-500" />
-  ) : (
-    <X className="text-green-500" />
-  );
-}
-
-function ReadOnlyTable({ data }: DailyMetricsProps) {
-  return data ? (
-    <div className="space-y-8">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Pushups</TableHead>
-            <TableHead>Pullups</TableHead>
-            <TableHead>Running (m)</TableHead>
-            <TableHead>Biking (m)</TableHead>
-            <TableHead>Smoke</TableHead>
-            <TableHead>Edibles</TableHead>
-            <TableHead>Alcohol</TableHead>
-            <TableHead>Porn</TableHead>
-            <TableHead>YouTube</TableHead>
-            <TableHead>Pages Read</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>{data.pushups || 0}</TableCell>
-            <TableCell>{data.pullups || 0}</TableCell>
-            <TableCell>{data.run_meters || 0}</TableCell>
-            <TableCell>{data.bike_meters || 0}</TableCell>
-            <TableCell>{getBooleanLogo(data.smoke)}</TableCell>
-            <TableCell>{getBooleanLogo(data.edibles)}</TableCell>
-            <TableCell>{getBooleanLogo(data.alcohol)}</TableCell>
-            <TableCell>{getBooleanLogo(data.pornography)}</TableCell>
-            <TableCell>{getBooleanLogo(data.youtube)}</TableCell>
-            <TableCell>{data.pages_read || 0}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-
-      {/* TODO: Render HTML */}
-      {/* <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>Strength</TableHead>
-            <TableHead>Cardio</TableHead>
-            <TableHead>Stretch</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow>
-            <TableCell>{data.stretch_notes}</TableCell>
-            <TableCell>{data.strength_notes}</TableCell>
-            <TableCell>{data.strength_notes}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table> */}
-    </div>
-  ) : (
-    <p className="text-xs italic">No data for today</p>
-  );
 }
 
 export interface DailyMetricsHandle {
@@ -173,25 +116,24 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
     return (
       <section className="pt-8">
         <h2 className="text-xl font-semibold mb-4">Today&apos;s Stats</h2>
-        {session ? (
-          <div className="space-y-2 items-end">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Pushups</TableHead>
-                  <TableHead>Pullups</TableHead>
-                  <TableHead>Running (m)</TableHead>
-                  <TableHead>Biking (m)</TableHead>
-                  <TableHead>Smoke</TableHead>
-                  <TableHead>Edibles</TableHead>
-                  <TableHead>Alcohol</TableHead>
-                  <TableHead>Porn</TableHead>
-                  <TableHead>YouTube</TableHead>
-                  <TableHead>Pages Read</TableHead>
-                  {/* <TableHead>Actions</TableHead> */}
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+        <div className="space-y-2 items-end">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Pushups</TableHead>
+                <TableHead>Pullups</TableHead>
+                <TableHead>Running (m)</TableHead>
+                <TableHead>Biking (m)</TableHead>
+                <TableHead>Smoke</TableHead>
+                <TableHead>Edibles</TableHead>
+                <TableHead>Alcohol</TableHead>
+                <TableHead>Porn</TableHead>
+                <TableHead>YouTube</TableHead>
+                <TableHead>Pages Read</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {session ? (
                 <TableRow>
                   <TableCell>
                     <Input
@@ -263,26 +205,34 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
                       onChange={(e) => setPagesRead(parseInt(e.target.value))}
                     />
                   </TableCell>
-                  {/* <TableCell className="w-16">
-                  <Save
-                    className="w-4 text-slate-500 hover:text-slate-700"
-                    onClick={handleSave}
-                  />
-                </TableCell> */}
                 </TableRow>
-              </TableBody>
-            </Table>
-
-            <Table>
-              <TableHeader>
+              ) : (
                 <TableRow>
-                  <TableHead>Strength</TableHead>
-                  <TableHead>Cardio</TableHead>
-                  <TableHead>Stretch</TableHead>
-                  {/* <TableHead>Actions</TableHead> */}
+                  <TableCell>{pushups || 0}</TableCell>
+                  <TableCell>{pullups || 0}</TableCell>
+                  <TableCell>{runMeters || 0}</TableCell>
+                  <TableCell>{bikeMeters || 0}</TableCell>
+                  <TableCell>{getBooleanLogo(smoke)}</TableCell>
+                  <TableCell>{getBooleanLogo(edibles)}</TableCell>
+                  <TableCell>{getBooleanLogo(alcohol)}</TableCell>
+                  <TableCell>{getBooleanLogo(pornography)}</TableCell>
+                  <TableCell>{getBooleanLogo(youtube)}</TableCell>
+                  <TableCell>{pagesRead || 0}</TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
+              )}
+            </TableBody>
+          </Table>
+
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Strength</TableHead>
+                <TableHead>Cardio</TableHead>
+                <TableHead>Stretch</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {session ? (
                 <TableRow>
                   <TableCell className="w-1/3">
                     <Input
@@ -305,19 +255,23 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
                       onChange={(e) => setStretchNotes(e.target.value)}
                     />
                   </TableCell>
-                  {/* <TableCell className="w-16">
-                  <Save
-                    className="w-4 text-slate-500 hover:text-slate-700"
-                    onClick={handleSave}
-                  />
-                </TableCell> */}
                 </TableRow>
-              </TableBody>
-            </Table>
-          </div>
-        ) : (
-          <ReadOnlyTable data={data} date={date} />
-        )}
+              ) : (
+                <TableRow>
+                  <TableCell className="w-1/3">
+                    {strengthNotes || "Nothing yet"}
+                  </TableCell>
+                  <TableCell className="w-1/3">
+                    {cardioNotes || "Nothing yet"}
+                  </TableCell>
+                  <TableCell className="w-1/3">
+                    {stretchNotes || "Nothing yet"}
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </section>
     );
   }
