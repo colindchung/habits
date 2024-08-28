@@ -26,6 +26,10 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
   }, [initialGoals]);
 
   const addGoal = () => {
+    if (!newGoal || newGoal.trim() === "") {
+      return;
+    }
+
     const goalRequest = [
       {
         date,
