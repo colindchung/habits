@@ -4,7 +4,7 @@ import supabase from "@/lib/supabase/client";
 export interface Project {
   name: string;
   description: string;
-  iconColour: string;
+  colour: number;
 }
 
 export interface ProjectsGetResponse {
@@ -23,15 +23,20 @@ export async function GET() {
   });
 }
 
-// export async function POST(request: Request) {
-//   const { name, description, iconColour } = await request.json();
-//   const { data, error } = await supabase
-//     .from("projects")
-//     .upsert([{ name, description, iconColour }]);
+export async function POST(request: Request) {
+  const { project } = await request.json();
 
-//   if (error) {
-//     return NextResponse.error(error.message);
-//   }
+  console.log("project", project);
+  const { data, error } = await supabase
+    .from("projects")
+    .upsert(project);
 
-//   return NextResponse.json(data);
-// }
+  console.log("data", data);
+  console.log("error", error);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(data);
+}

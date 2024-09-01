@@ -9,10 +9,6 @@ export interface Goal {
   notes: string;
 }
 
-export interface GoalsPutRequest {
-  goals: Goal[];
-}
-
 export async function POST(request: Request) {
   const { goals } = await request.json();
   const { error } = await supabase.from("daily_goals").upsert(goals);
