@@ -17,19 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { HexColorPicker } from "react-colorful";
-
-function hexToInt(hex: string) {
-  try {
-    return parseInt(hex.replace('#', ''), 16);
-  } catch (e) {
-    return 0;
-  }
-}
-
-function intToHex(int: number) {
-  console.log(`#${int.toString(16).padStart(6, '0')}`)
-  return `#${int.toString(16).padStart(6, '0')}`;
-}
+import { hexToInt, intToHex } from "@/lib/utils";
 
 export default function Projects() {
   const { data, isFetching } = useQuery({
@@ -46,7 +34,6 @@ export default function Projects() {
       description: string;
       colour: string;
     }) => {
-      console.log( JSON.stringify(project));
       const response = await fetch(`/api/projects`, {
         method: "POST",
         body: JSON.stringify({
@@ -62,6 +49,22 @@ export default function Projects() {
     },
   });
 
+  // const completeProject = useMutation({
+  //   mutationFn: async (projectId: number) => {
+  //     const response = await fetch(`/api/projects`, {
+  //       method: "POST",
+  //       body: JSON.stringify({
+  //         project: {
+  //           id: projectId,
+  //           completed: true,
+  //         },
+  //       }),
+  //     });
+
+  //     return (await response.json()) as ProjectsGetResponse;
+  //   },
+  // });
+
   const session = useSessionContext();
   const [isCreating, setIsCreating] = useState(false);
   const [projectName, setProjectName] = useState("");
@@ -71,6 +74,10 @@ export default function Projects() {
   const handleCreateProject = () => {
     createProject.mutate({ name: projectName, description: projectDescription, colour: projectColour });
   };
+
+  // const handleCompleteProject = (projectId: number) => {
+  //   completeProject.mutate(projectId);
+  // };
 
   return (
     <main className="h-full w-full py-8">
@@ -114,7 +121,11 @@ export default function Projects() {
                 <TableHead>Colour</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
-                <TableHead className="w-16">Actions</TableHead>
+                {/* {
+                  session && (
+                    <TableHead className="w-16">Actions</TableHead>
+                  )
+                } */}
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -125,14 +136,13 @@ export default function Projects() {
                   </TableCell>
                   <TableCell>{project.name}</TableCell>
                   <TableCell>{project.description}</TableCell>
-                  <TableCell className="w-16">
-                    {/* <button className="p-2 bg-slate-100 rounded-sm">
-                      Edit
-                    </button>
-                    <button className="p-2 bg-slate-100 rounded-sm">
-                      Delete
-                    </button> */}
-                  </TableCell>
+                  {/* {
+                    session && (
+                      <Button variant="ghost" className="p-2" onClick={() => handleCompleteProject(project.id)}>
+                        <Check size={16} />
+                      </Button>
+                    )
+                  } */}
                 </TableRow>
               ))}
             </TableBody>

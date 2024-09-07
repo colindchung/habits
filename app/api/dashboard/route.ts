@@ -77,7 +77,12 @@ export async function GET(request: Request) {
           id,
           description,
           is_completed,
-          notes
+          notes,
+          project:projects (
+            id,
+            name,
+            colour
+          )
       `
       )
       .eq("date", date)

@@ -22,3 +22,15 @@ export function parseUrlQueryParams(url: string) {
 
   return queryParams;
 }
+
+export function hexToInt(hex: string) {
+  try {
+    return parseInt(hex.replace('#', ''), 16);
+  } catch (e) {
+    return 0;
+  }
+}
+
+export function intToHex(int: number) {
+  return `#${int.toString(16).padStart(6, '0')}`;
+}
