@@ -90,6 +90,7 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
       if (goal.id === id) {
         goal.is_completed = !goal.is_completed;
       }
+
       return goal;
     });
 
@@ -97,7 +98,8 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
     void fetch(`/api/goals`, {
       method: "POST",
       body: JSON.stringify({
-        goals: newGoals,
+        // Remove project from request object
+        goals: newGoals.map(({project, ...goal}) => goal),
       }),
     });
   };

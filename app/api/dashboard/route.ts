@@ -78,6 +78,7 @@ export async function GET(request: Request) {
           description,
           is_completed,
           notes,
+          project_id,
           project:projects (
             id,
             name,
