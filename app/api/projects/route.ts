@@ -27,13 +27,9 @@ export async function GET() {
 export async function POST(request: Request) {
   const { project } = await request.json();
 
-  console.log("project", project);
   const { data, error } = await supabase
     .from("projects")
     .upsert(project);
-
-  console.log("data", data);
-  console.log("error", error);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

@@ -32,10 +32,15 @@ export default function Home() {
     }> => {
       if (!dailyMetricsRef.current) return { newData: null };
       const data = dailyMetricsRef.current.getTableData();
+
+      // get local date
+      const localDate = new Date(date || new Date());
+      const formattedDate = formatDate(localDate, "YYYY-MM-DD");
+
       const response = await fetch("/api/dashboard", {
         method: "POST",
         body: JSON.stringify({
-          date,
+          date: formattedDate,
           pushups: data.pushups,
           pullups: data.pullups,
           run_meters: data.run_meters,
