@@ -24,7 +24,7 @@ interface WeeklyMetricsProps {
 function WeeklyMetrics({ data }: WeeklyMetricsProps) {
   return (
     <>
-      <h2 className="text-xl font-semibold">Weekly Goals</h2>
+      <h2 className="text-2xl font-semibold">Weekly Goals</h2>
       <div className="flex flex-row flex-wrap gap-8">
         <div>
           <Label>

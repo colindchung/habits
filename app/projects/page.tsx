@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ProjectsGetResponse } from "../api/projects/route";
 import { Button } from "@/components/ui/button";
 import { useSessionContext } from "@/contexts/SessionContext";
@@ -18,8 +18,18 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { HexColorPicker } from "react-colorful";
 import { hexToInt, intToHex } from "@/lib/utils";
+import { Check } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { formatDate } from "@/lib/date";
 
 export default function Projects() {
+  const queryClient = useQueryClient();
+
   const { data, isFetching } = useQuery({
     queryKey: ["projects"],
     queryFn: async () => {
@@ -49,21 +59,43 @@ export default function Projects() {
     },
   });
 
-  // const completeProject = useMutation({
-  //   mutationFn: async (projectId: number) => {
-  //     const response = await fetch(`/api/projects`, {
-  //       method: "POST",
-  //       body: JSON.stringify({
-  //         project: {
-  //           id: projectId,
-  //           completed: true,
-  //         },
-  //       }),
-  //     });
+  const completeProject = useMutation({
+    mutationFn: async (projectId: number) => {
+      const localDate = new Date();
+      const formattedDate = formatDate(localDate, "YYYY-MM-DD");
 
-  //     return (await response.json()) as ProjectsGetResponse;
-  //   },
-  // });
+      const response = await fetch(`/api/projects`, {
+        method: "POST",
+        body: JSON.stringify({
+          project: {
+            id: projectId,
+            completed_at: formattedDate,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const currentProject = data?.incompleteProjects.find((project) => project.id === projectId);
+      if (currentProject) {
+        currentProject.completed_at = formattedDate;
+
+        const newData = {
+          completedProjects: [...data?.completedProjects || [], currentProject],
+          incompleteProjects: data?.incompleteProjects.filter((project) => project.id !== projectId),
+        }
+
+        return newData;
+      }      
+    },
+    onSuccess: (data) => {
+      if (data) {
+        queryClient.setQueryData(["projects"], data);
+      }
+    },
+  });
 
   const session = useSessionContext();
   const [isCreating, setIsCreating] = useState(false);
@@ -75,21 +107,15 @@ export default function Projects() {
     createProject.mutate({ name: projectName, description: projectDescription, colour: projectColour });
   };
 
-  // const handleCompleteProject = (projectId: number) => {
-  //   completeProject.mutate(projectId);
-  // };
-
   return (
     <main className="h-full w-full py-8">
-      <h2 className="text-xl font-semibold">Projects</h2>
-      {isFetching ? (
-        <p>Loading...</p>
-      ) : (
-        <div className="flex flex-col items-end pt-8">
-          {session && (
+
+      <span className="flex flex-row justify-between items-center">
+        <h2 className="text-2xl font-semibold">Projects</h2>
+        {session && (
             <>
-            <Button className="border-none rounded py-2 px-3 mb-4" onClick={() => setIsCreating(true)}>
-              Create Project
+              <Button className="border-none rounded py-2 px-3 mb-4" onClick={() => setIsCreating(true)}>
+                Create Project
               </Button>
               <Dialog open={isCreating} onOpenChange={setIsCreating}>
                 <DialogContent>
@@ -115,34 +141,71 @@ export default function Projects() {
               </Dialog>
             </>
           )}
+      </span>
+
+      {isFetching ? (
+        <p>Loading...</p>
+      ) : (
+        <div className="flex flex-col items-start pt-2">
+          <h2 className="text-lg font-semibold mt-4">Open Projects</h2>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Colour</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>Description</TableHead>
-                {/* {
-                  session && (
-                    <TableHead className="w-16">Actions</TableHead>
-                  )
-                } */}
               </TableRow>
             </TableHeader>
             <TableBody>
-              {data?.projects.map((project) => (
+              {data?.incompleteProjects.map((project) => (
                 <TableRow key={project.name}>
                   <TableCell className="w-16">
                     <div className="w-4 h-4 rounded-full" style={{ backgroundColor: intToHex(project.colour) }} />
                   </TableCell>
                   <TableCell>{project.name}</TableCell>
                   <TableCell>{project.description}</TableCell>
-                  {/* {
+                  {
                     session && (
-                      <Button variant="ghost" className="p-2" onClick={() => handleCompleteProject(project.id)}>
-                        <Check size={16} />
-                      </Button>
+                      <TableCell className="w-16">
+                        <TooltipProvider>
+                          <Tooltip>
+                            <TooltipTrigger>
+                              <Button variant="ghost" className="p-2" onClick={() => completeProject.mutate(project.id)}>
+                                <Check size={16} />
+                              </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                              Complete Project
+                            </TooltipContent>
+                          </Tooltip>
+                        </TooltipProvider>
+                      </TableCell>
                     )
-                  } */}
+                  }
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+
+          <h2 className="text-lg font-semibold mt-4">Completed Projects</h2>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Colour</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Description</TableHead>
+                <TableHead>Completed At</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data?.completedProjects.map((project) => (
+                <TableRow key={project.name}>
+                  <TableCell className="w-16">
+                    <div className="w-4 h-4 rounded-full" style={{ backgroundColor: intToHex(project.colour) }} />
+                  </TableCell>
+                  <TableCell>{project.name}</TableCell>
+                  <TableCell>{project.description}</TableCell>
+                  <TableCell>{project.completed_at}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

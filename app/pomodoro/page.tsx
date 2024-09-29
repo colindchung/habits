@@ -38,7 +38,7 @@ export default function Pomodoro() {
 
   return (
     <main className="h-full w-full py-8">
-      <h2 className="text-xl font-semibold">Pomodoro Timer</h2>
+      <h2 className="text-2xl font-semibold">Pomodoro Timer</h2>
       <div className="w-full h-full flex justify-center items-center">
         {isCounting ? (
           <Countdown

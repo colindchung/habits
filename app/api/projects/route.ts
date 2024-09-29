@@ -6,10 +6,12 @@ export interface Project {
   name: string;
   description: string;
   colour: number;
+  completed_at: string | null;
 }
 
 export interface ProjectsGetResponse {
-  projects: Project[];
+  completedProjects: Project[];
+  incompleteProjects: Project[];
 }
 
 export async function GET() {
@@ -19,7 +21,15 @@ export async function GET() {
     return NextResponse.json({ error: "Error fetching data" }, { status: 500 });
   }
 
-  return NextResponse.json({ projects: data } as ProjectsGetResponse, {
+  if (data) {
+    const completedProjects = data.filter((project) => project.completed_at !== null);
+    const incompleteProjects = data.filter((project) => project.completed_at === null);
+    return NextResponse.json({ completedProjects, incompleteProjects } as ProjectsGetResponse, {
+      status: 200,
+    });
+  }
+
+  return NextResponse.json({ completedProjects: [], incompleteProjects: [] } as ProjectsGetResponse, {
     status: 200,
   });
 }
@@ -27,7 +37,7 @@ export async function GET() {
 export async function POST(request: Request) {
   const { project } = await request.json();
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("projects")
     .upsert(project);
 
@@ -35,5 +45,5 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json(data);
+  return NextResponse.json({ success: true });
 }

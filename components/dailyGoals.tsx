@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import supabase from "@/lib/supabase/client";
 import { intToHex } from "@/lib/utils";
 import {
@@ -46,12 +46,12 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
   const { data: projects } = useQuery({
     queryKey: ["projects", "dashboard"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("projects").select("*");
+      const { data, error } = await supabase.from("projects").select("*").is("completed_at", null);
       if (error) {
         throw error;
       }
 
-      return data as { id: number; name: string; colour: string }[];
+      return data as { id: number; name: string; colour: number }[];
     },
   });
 
@@ -59,31 +59,40 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
     setGoals(initialGoals);
   }, [initialGoals]);
 
-  const addGoal = () => {
-    if (!newGoal || newGoal.trim() === "") {
-      return;
-    }
 
-    const goalRequest = [
-      {
-        date,
-        id: goals.length + 1,
-        description: newGoal,
-        is_completed: false,
-        notes: "",
-        project_id: projectId === "-" ? null : parseInt(projectId),
-      },
-    ];
+  const createGoal = useMutation({
+    mutationFn: async (goal: {
+      date: string;
+      id: number;
+      description: string;
+      is_completed: boolean;
+      notes: string;
+      project_id: number | null;
+    }) => {
+      const response = await fetch(`/api/goals`, {
+        method: "POST",
+        body: JSON.stringify({
+          goals: goal,
+        }),
+      });
 
-    setGoals([...goals, ...goalRequest]);
-    setNewGoal("");
-    void fetch(`/api/goals`, {
-      method: "POST",
-      body: JSON.stringify({
-        goals: goalRequest,
-      }),
-    });
-  };
+      if (!response.ok) {
+        return null;
+      }
+
+      const newGoal = {
+        ...goal,
+        project: projects?.find((project) => project.id === goal.project_id)
+      };
+
+      return newGoal;
+    },
+    onSuccess: (data) => {
+      if (data) {
+        setGoals([...goals, data]);
+      }
+    },
+  });
 
   const completeGoal = (id: number) => {
     const newGoals = goals.map((goal) => {
@@ -106,7 +115,7 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
 
   return (
     <section className="flex flex-col pt-8 gap-y-2">
-      <h2 className="text-xl font-semibold">Today&apos;s Goals</h2>
+      <h2 className="text-2xl font-semibold">Today&apos;s Goals</h2>
 
       <ul className="pl-4">
         {goals.map((goal) => (
@@ -163,15 +172,16 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={addGoal}>Add</Button>
+          <Button onClick={() => createGoal.mutate({
+            id: goals.length + 1,
+            date: date,
+            description: newGoal,
+            is_completed: false,
+            notes: "",
+            project_id: projectId === "-" ? null : parseInt(projectId),
+          })}>Add</Button>
         </div>
       )}
-
-      {/* {session ? (
-        <WriteTable data={data} date={date} />
-      ) : (
-        <ReadOnlyTable data={data} date={date} />
-      )} */}
     </section>
   );
 }

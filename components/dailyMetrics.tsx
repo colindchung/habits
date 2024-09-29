@@ -115,7 +115,7 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
 
     return (
       <section className="pt-8">
-        <h2 className="text-xl font-semibold mb-4">Today&apos;s Stats</h2>
+        <h2 className="text-2xl font-semibold mb-4">Today&apos;s Stats</h2>
         <div className="space-y-2 items-end">
           <Table>
             <TableHeader>
