@@ -90,6 +90,7 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
     onSuccess: (data) => {
       if (data) {
         setGoals([...goals, data]);
+        setNewGoal("");
       }
     },
   });
