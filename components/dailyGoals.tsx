@@ -19,6 +19,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "./ui/tooltip";
+import { TrashIcon } from "lucide-react";
 
 interface DailyGoalsProps {
   date: string;
@@ -46,7 +47,10 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
   const { data: projects } = useQuery({
     queryKey: ["projects", "dashboard"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("projects").select("*").is("completed_at", null);
+      const { data, error } = await supabase
+        .from("projects")
+        .select("*")
+        .is("completed_at", null);
       if (error) {
         throw error;
       }
@@ -58,7 +62,6 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
   useEffect(() => {
     setGoals(initialGoals);
   }, [initialGoals]);
-
 
   const createGoal = useMutation({
     mutationFn: async (goal: {
@@ -82,7 +85,7 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
 
       const newGoal = {
         ...goal,
-        project: projects?.find((project) => project.id === goal.project_id)
+        project: projects?.find((project) => project.id === goal.project_id),
       };
 
       return newGoal;
@@ -109,10 +112,22 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
       method: "POST",
       body: JSON.stringify({
         // Remove project from request object
-        goals: newGoals.map(({project, ...goal}) => goal),
+        goals: newGoals.map(({ project, ...goal }) => goal),
       }),
     });
   };
+
+  const deleteGoal = useMutation({
+    mutationFn: async (id: number) => {
+      await fetch(`/api/goals`, {
+        method: "DELETE",
+        body: JSON.stringify({ id, date }),
+      });
+
+      const newGoals = goals.filter((goal) => goal.id !== id);
+      setGoals(newGoals);
+    },
+  });
 
   return (
     <section className="flex flex-col pt-8 gap-y-2">
@@ -145,6 +160,13 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
               <div className="w-3 h-3" />
             )}
             <p>{goal.description}</p>
+
+            <div
+              className="hover:bg-slate-100 rounded-md p-1"
+              onClick={() => deleteGoal.mutate(goal.id)}
+            >
+              <TrashIcon className="w-4 h-4" />
+            </div>
           </li>
         ))}
       </ul>
@@ -173,14 +195,20 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
               ))}
             </SelectContent>
           </Select>
-          <Button onClick={() => createGoal.mutate({
-            id: goals.length + 1,
-            date: date,
-            description: newGoal,
-            is_completed: false,
-            notes: "",
-            project_id: projectId === "-" ? null : parseInt(projectId),
-          })}>Add</Button>
+          <Button
+            onClick={() =>
+              createGoal.mutate({
+                id: goals.length + 1,
+                date: date,
+                description: newGoal,
+                is_completed: false,
+                notes: "",
+                project_id: projectId === "-" ? null : parseInt(projectId),
+              })
+            }
+          >
+            Add
+          </Button>
         </div>
       )}
     </section>

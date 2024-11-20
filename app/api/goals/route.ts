@@ -24,3 +24,24 @@ export async function POST(request: Request) {
     }
   );
 }
+
+export async function DELETE(request: Request) {
+  const { id, date } = await request.json();
+
+  const { error } = await supabase
+    .from("daily_goals")
+    .delete()
+    .eq("id", id)
+    .eq("date", date);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json(
+    { message: "Successfully deleted goal" },
+    {
+      status: 200,
+    }
+  );
+}

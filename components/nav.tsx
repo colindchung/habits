@@ -28,10 +28,6 @@ const data = [
     title: "Projects",
     href: "/projects",
   },
-  {
-    title: "Pomodoro",
-    href: "/pomodoro",
-  },
 ];
 
 function DesktopLinks() {
