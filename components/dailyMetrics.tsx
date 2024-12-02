@@ -25,9 +25,6 @@ export interface Metrics {
   pullups: number;
   run_meters: number;
   bike_meters: number;
-  stretch_notes: string;
-  cardio_notes: string;
-  strength_notes: string;
   smoke: boolean;
   alcohol: boolean;
   edibles: boolean;
@@ -67,16 +64,6 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
     const [youtube, setYoutube] = useState<boolean>(data?.youtube || false);
     const [pagesRead, setPagesRead] = useState<number>(data?.pages_read || 0);
 
-    const [stretchNotes, setStretchNotes] = useState<string>(
-      data?.stretch_notes || ""
-    );
-    const [cardioNotes, setCardioNotes] = useState<string>(
-      data?.cardio_notes || ""
-    );
-    const [strengthNotes, setStrengthNotes] = useState<string>(
-      data?.strength_notes || ""
-    );
-
     useImperativeHandle(
       ref,
       () => ({
@@ -85,9 +72,6 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
           pullups,
           run_meters: runMeters,
           bike_meters: bikeMeters,
-          stretch_notes: stretchNotes,
-          cardio_notes: cardioNotes,
-          strength_notes: strengthNotes,
           smoke,
           edibles,
           alcohol,
@@ -101,9 +85,9 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
         pullups,
         runMeters,
         bikeMeters,
-        stretchNotes,
-        cardioNotes,
-        strengthNotes,
+        // stretchNotes,
+        // cardioNotes,
+        // strengthNotes,
         smoke,
         edibles,
         alcohol,
@@ -218,55 +202,6 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
                   <TableCell>{getBooleanLogo(pornography)}</TableCell>
                   <TableCell>{getBooleanLogo(youtube)}</TableCell>
                   <TableCell>{pagesRead || 0}</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Strength</TableHead>
-                <TableHead>Cardio</TableHead>
-                <TableHead>Stretch</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {session ? (
-                <TableRow>
-                  <TableCell className="w-1/3">
-                    <Input
-                      className="w-full"
-                      value={strengthNotes}
-                      onChange={(e) => setStrengthNotes(e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell className="w-1/3">
-                    <Input
-                      className="w-full"
-                      value={cardioNotes}
-                      onChange={(e) => setCardioNotes(e.target.value)}
-                    />
-                  </TableCell>
-                  <TableCell className="w-1/3">
-                    <Input
-                      className="w-full"
-                      value={stretchNotes}
-                      onChange={(e) => setStretchNotes(e.target.value)}
-                    />
-                  </TableCell>
-                </TableRow>
-              ) : (
-                <TableRow>
-                  <TableCell className="w-1/3">
-                    {strengthNotes || "Nothing yet"}
-                  </TableCell>
-                  <TableCell className="w-1/3">
-                    {cardioNotes || "Nothing yet"}
-                  </TableCell>
-                  <TableCell className="w-1/3">
-                    {stretchNotes || "Nothing yet"}
-                  </TableCell>
                 </TableRow>
               )}
             </TableBody>

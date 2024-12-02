@@ -9,9 +9,6 @@ export interface DashboardGetResponse {
     pullups: number;
     run_meters: number;
     bike_meters: number;
-    stretch_notes: string;
-    cardio_notes: string;
-    strength_notes: string;
     smoke: boolean;
     alcohol: boolean;
     edibles: boolean;
@@ -52,9 +49,6 @@ export async function GET(request: Request) {
           pullups,
           run_meters,
           bike_meters,
-          stretch_notes,
-          cardio_notes,
-          strength_notes,
           smoke,
           alcohol,
           edibles,
@@ -124,9 +118,6 @@ export interface DailyNotesRequestType {
   pullups: number;
   run_meters: number;
   bike_meters: number;
-  stretch_notes: string;
-  cardio_notes: string;
-  strength_notes: string;
   smoke: boolean;
   alcohol: boolean;
   edibles: boolean;
@@ -142,9 +133,6 @@ export async function POST(request: Request) {
     pullups,
     run_meters,
     bike_meters,
-    strength_notes,
-    cardio_notes,
-    stretch_notes,
     smoke,
     alcohol,
     edibles,
@@ -162,9 +150,6 @@ export async function POST(request: Request) {
           pullups,
           run_meters,
           bike_meters,
-          stretch_notes,
-          cardio_notes,
-          strength_notes,
           smoke,
           alcohol,
           edibles,
