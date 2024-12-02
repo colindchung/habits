@@ -197,7 +197,8 @@ function DailyGoals({ date, initialGoals }: DailyGoalsProps) {
           </Select>
           <Button
             onClick={() => {
-              const newGoalId = goals[goals.length - 1].id + 1;
+              const newGoalId =
+                goals.length > 0 ? goals[goals.length - 1].id + 1 : 1;
               createGoal.mutate({
                 id: newGoalId,
                 date: date,
