@@ -108,6 +108,7 @@ export default function Home() {
     },
   });
 
+  const formattedDate = formatDate(date || new Date(), "YYYY-MM-DD");
   return (
     <main className="h-full w-full py-8">
       <DatePicker date={date} setDate={setDate} />
@@ -116,11 +117,12 @@ export default function Home() {
           <p>Loading...</p>
         ) : data ? (
           <div className="flex flex-col">
-            <WeeklyMetrics data={data.weekInfo} />
-            <DailyGoals
-              date={formatDate(date || new Date(), "YYYY-MM-DD")}
-              initialGoals={data.goals}
+            <WeeklyMetrics
+              date={formattedDate}
+              data={data.weekInfo}
+              ingredient={data.ingredient}
             />
+            <DailyGoals date={formattedDate} initialGoals={data.goals} />
             <DailyMetrics
               data={data.todayInfo}
               date={formatDate(date || new Date(), "YYYY-MM-DD")}

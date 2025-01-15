@@ -111,7 +111,7 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
                 <TableHead>Smoke</TableHead>
                 <TableHead>Edibles</TableHead>
                 <TableHead>Alcohol</TableHead>
-                <TableHead>Porn</TableHead>
+                {/* <TableHead>Porn</TableHead> */}
                 <TableHead>YouTube</TableHead>
                 <TableHead>Pages Read</TableHead>
               </TableRow>
@@ -169,12 +169,12 @@ const DailyMetrics = forwardRef<DailyMetricsHandle, DailyMetricsProps>(
                       onCheckedChange={(e) => setAlcohol(e as boolean)}
                     />
                   </TableCell>
-                  <TableCell>
+                  {/* <TableCell>
                     <Checkbox
                       checked={pornography}
                       onCheckedChange={(e) => setPornography(e as boolean)}
                     />
-                  </TableCell>
+                  </TableCell> */}
                   <TableCell>
                     <Checkbox
                       checked={youtube}

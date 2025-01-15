@@ -30,6 +30,7 @@ export interface DashboardGetResponse {
     bike_meters: number;
     pages_read: number;
   };
+  ingredient: string;
 }
 
 export async function GET(request: Request) {
@@ -87,6 +88,18 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: goalsError.message }, { status: 500 });
     }
 
+    const { data: ingredientData, error: ingredientError } = await supabase
+      .from("weekly_ingredient")
+      .select("name")
+      .eq("date", weekDates[0]);
+
+    if (ingredientError) {
+      return NextResponse.json(
+        { error: ingredientError.message },
+        { status: 500 }
+      );
+    }
+
     const todayInfo = dailyInfoForWeek.find((day) => day.date === date);
     const weekInfo = dailyInfoForWeek.reduce(
       (acc, obj) => {
@@ -104,6 +117,7 @@ export async function GET(request: Request) {
       todayInfo,
       goals: dailyGoalsForWeek,
       weekInfo,
+      ingredient: ingredientData[0]?.name || "",
     };
 
     return NextResponse.json(response, { status: 200 });
