@@ -59,7 +59,7 @@ function WeeklyMetrics({ data }: WeeklyMetricsProps) {
             />
           </div>
         </div>
-        <div>
+        {/* <div>
           <Label>
             Biking ({data.bike_meters}/{WEEKLY_GOALS.BIKE_METERS})
           </Label>
@@ -69,7 +69,7 @@ function WeeklyMetrics({ data }: WeeklyMetricsProps) {
               className="bg-zinc-300 w-48"
             />
           </div>
-        </div>
+        </div> */}
         <div>
           <Label>
             Pages Read ({data.pages_read}/{WEEKLY_GOALS.PAGES_READ})
