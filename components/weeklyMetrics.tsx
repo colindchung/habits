@@ -3,13 +3,12 @@ import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Progress } from "./ui/progress";
-import { formatDate } from "@/lib/date";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 
 const WEEKLY_GOALS = {
-  PUSHUPS: 350,
-  PULLUPS: 70,
+  PUSHUPS: 250,
+  PULLUPS: 50,
   RUN_METERS: 15000,
   BIKE_METERS: 30000,
   PAGES_READ: 100,
