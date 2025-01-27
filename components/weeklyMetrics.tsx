@@ -10,7 +10,7 @@ const WEEKLY_GOALS = {
   PUSHUPS: 250,
   PULLUPS: 50,
   RUN_METERS: 15000,
-  BIKE_METERS: 30000,
+  BIKE_METERS: 25000,
   PAGES_READ: 100,
 };
 
@@ -82,6 +82,17 @@ function WeeklyMetrics({ date, data, ingredient }: WeeklyMetricsProps) {
           <div className="flex flex-row items-center space-x-4">
             <Progress
               value={(100 * data.run_meters) / WEEKLY_GOALS.RUN_METERS}
+              className="bg-zinc-300 w-48"
+            />
+          </div>
+        </div>
+        <div>
+          <Label>
+            Biking ({data.bike_meters}/{WEEKLY_GOALS.BIKE_METERS})
+          </Label>
+          <div className="flex flex-row items-center space-x-4">
+            <Progress
+              value={(100 * data.bike_meters) / WEEKLY_GOALS.BIKE_METERS}
               className="bg-zinc-300 w-48"
             />
           </div>
